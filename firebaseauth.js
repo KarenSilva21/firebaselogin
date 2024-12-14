@@ -1,7 +1,7 @@
 // Importa as funções necessárias do Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 // Configurações do Firebase
 const firebaseConfig = {
@@ -99,4 +99,98 @@ signIn.addEventListener('click', (event) => {
             showMessage('Essa conta não existe', 'signInMessage');
         }
     });
+});
+
+// Lógica de login com Google
+// Seleciona todos os botões de login com Google
+const googleLoginButtons = document.querySelectorAll('.google-login-button');
+
+// Adiciona o evento de clique para cada botão
+googleLoginButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+        event.preventDefault(); // Previne o comportamento padrão
+        loginWithGoogle(); // Chama a função de login com Google
+    });
+});
+
+// Função reutilizável para login com Google
+function loginWithGoogle() {
+    const auth = getAuth(); // Configura o serviço de autenticação
+    const provider = new GoogleAuthProvider(); // Cria o provedor do Google
+    const db = getFirestore(); // Conecta ao Firestore
+
+    // Abre o popup para login com Google
+    signInWithPopup(auth, provider)
+    .then((result) => {
+        const user = result.user; // Usuário autenticado
+        const userData = {
+            email: user.email,
+            firstName: user.displayName.split(' ')[0],
+            lastName: user.displayName.split(' ').slice(1).join(' '),
+        };
+
+        // Exibe mensagem de sucesso
+        showMessage('Usuário logado com Google com sucesso', 'signInMessage');
+
+        // Salva os dados do usuário no Firestore
+        const docRef = doc(db, "users", user.uid);
+        setDoc(docRef, userData, { merge: true }) // Atualiza se o documento já existir
+        .then(() => {
+            // Salva o ID do usuário no localStorage
+            localStorage.setItem('loggedInUserId', user.uid);
+            window.location.href = 'homepage.html'; // Redireciona para a página inicial
+        })
+        .catch((error) => {
+            console.error("Erro ao salvar os dados do usuário no Firestore:", error);
+        });
+    })
+    .catch((error) => {
+        console.error("Erro ao autenticar com Google:", error);
+        showMessage('Erro ao autenticar com Google', 'signInMessage');
+    });
+}
+
+// Lógica para exibir a caixa de recuperação de senha usando o pop-up do navegador
+const recoveryLink = document.querySelector('.recover a');
+
+recoveryLink.addEventListener('click', (event) => {
+    event.preventDefault(); // Previne o comportamento padrão do link
+
+    // Exibe o prompt para o usuário inserir o e-mail
+    const recoveryEmail = prompt("Digite seu e-mail para recuperação de senha:");
+
+    if (recoveryEmail) {
+        const auth = getAuth(); // Configura o serviço de autenticação
+        const db = getFirestore(); // Conecta ao Firestore
+
+        // Verifica se o e-mail está presente no Firestore
+        const usersRef = doc(db, "users", recoveryEmail); // Assumindo que o e-mail é a chave do documento ou armazenado dessa forma
+        getDoc(usersRef)
+            .then((docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    // O e-mail existe no Firestore, envia o e-mail de recuperação
+                    sendPasswordResetEmail(auth, recoveryEmail)
+                        .then(() => {
+                            alert("E-mail de recuperação enviado com sucesso. Verifique sua caixa de entrada.");
+                        })
+                        .catch((error) => {
+                            const errorCode = error.code;
+                            let errorMessage = "Ocorreu um erro. Tente novamente.";
+                            if (errorCode === 'auth/invalid-email') {
+                                errorMessage = "O e-mail inserido é inválido. Tente novamente.";
+                            }
+                            alert(errorMessage);
+                        });
+                } else {
+                    // O e-mail não foi encontrado no Firestore, informa ao usuário
+                    alert("E-mail não encontrado. Tente novamente.");
+                }
+            })
+            .catch((error) => {
+                console.error("Erro ao verificar o e-mail no Firestore:", error);
+                alert("Erro ao verificar o e-mail. Tente novamente.");
+            });
+    } else {
+        alert("Por favor, insira um e-mail válido.");
+    }
 });

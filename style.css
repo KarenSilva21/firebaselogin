@@ -102,7 +102,7 @@ body {
 
 .icons i {
     font-size: 1.5rem;
-    color: #1D6DCD;
+    color: #FF6400;
     margin: 0 10px;
     cursor: pointer;
     transition: color 0.3s;
@@ -148,6 +148,46 @@ body {
     padding: 10px;
     color: red;
     font-size: 0.9rem;
+}
+
+
+/* Estilo do botão de login */
+.google-login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centraliza o conteúdo no botão */
+    gap: 8px; /* Espaço entre o ícone e o texto */
+    background-color: white; /* Fundo branco */
+    color: #4285F4; /* Azul do Google */
+    font-family: Arial, sans-serif; /* Define a fonte */
+    font-size: 16px; /* Tamanho do texto */
+    font-weight: bold; /* Negrito para o texto */
+    padding: 10px 16px; /* Espaçamento interno */
+    border: 1px solid #d3d3d3; /* Borda cinza clara */
+    border-radius: 50px; /* Bordas arredondadas */
+    cursor: pointer; /* Mostra o cursor de clique */
+    width: auto; /* Ajusta automaticamente ao conteúdo */
+    text-align: center; /* Garante alinhamento central */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animações */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    border: none; /* Remove a borda padrão do botão */
+    width: 100%;
+}
+
+.google-login-button i {
+    font-size: 20px; /* Tamanho do ícone */
+}
+
+/* Efeitos ao passar o mouse */
+.google-login-button:hover {
+    background-color: #f5f5f5; /* Fundo levemente mais claro */
+    transform: scale(1.05); /* Aumenta levemente */
+}
+
+/* Efeito ao clicar */
+.google-login-button:active {
+    background-color: #e0e0e0; /* Fundo mais escuro ao pressionar */
+    transform: scale(0.98); /* Diminui levemente */
 }
 
 @media (max-width: 600px) {
