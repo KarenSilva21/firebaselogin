@@ -5,14 +5,15 @@ import { getFirestore, getDoc, doc } from "https://www.gstatic.com/firebasejs/10
 
 // Configuração do Firebase com as credenciais do projeto
 const firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: "",
-    measurementId: ""
+    apiKey: "AIzaSyDXp48Mex8YHTg4LoYMVaNRq6TwVJ5YRJI",
+    authDomain: "login-pw-ii.firebaseapp.com",
+    projectId: "login-pw-ii",
+    storageBucket: "login-pw-ii.firebasestorage.app",
+    messagingSenderId: "388491329964",
+    appId: "1:388491329964:web:0807dab7609f20e4c27a09",
+    measurementId: "G-P0ER11FFC2"
 };
+
 
 // Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
